@@ -14,7 +14,7 @@ class Server
 		std::vector<std::string>	_methods;
 		bool						_autoidx;
 		std::vector<std::string>	_index;
-		std::vector<std::string>	_errorPage;
+		std::map<std::string, std::string>	_errorPage;
 
 	public:
 		Server();

@@ -22,6 +22,22 @@ void    signal_handler(int signal) {
     }
 }
 
+std::string faviCreate() {
+    std::string html = R"(
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Page</title>
+  <link rel="icon" href="favi/favi.ico" type="image/x-icon">
+</head>
+<body>
+  <h1>Welcome to my page!</h1>
+</body>
+</html>
+)";
+return html;
+}
+
 std::string create_http_response() {
     std::ifstream file("home.html");
     std::string html;
@@ -54,11 +70,11 @@ int main() {
         return 1;
     }
 
-    // int opt = 1;
-    // if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))) {
-    //     std::cerr << "setsockopt failed" << std::endl;
-    //     return 1;
-    // }
+    int opt = 1;
+    if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt))) {
+        std::cerr << "setsockopt failed" << std::endl;
+        return 1;
+    }
 
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
@@ -93,20 +109,17 @@ int main() {
         if (valread > 0) {
             std::string request(buffer, valread);
 
-            if (request.find("GET") != std::string::npos) {
-                std::cout << "ok" << std::endl;
+            if (request.find("favicon") != std::string::npos) {
+                std::cout << "favicon sent" << std::endl;
             } else {
                 std::cout << "false" << std::endl;
+                std::string response = create_http_response();
+                send(new_socket, response.c_str(), response.length(), 0);
+                std::cout << "Response sent" << std::endl;
+                std::cout << request << std::endl;
             }
-
-            std::cout << request << std::endl;
         }
-        std::string response = create_http_response();
-        send(new_socket, response.c_str(), response.length(), 0);
-        std::cout << "Response sent" << std::endl;
-
         close(new_socket);
     }
-
     return 0;
 }
