@@ -25,25 +25,25 @@ Server&	Server::operator=(const Server& rhs) {
 	return *this;
 }
 
-void	Server::setName(const std::string& n) {
-	if (!n.empty())
-		_serverName.push_back(n);
+void	Server::setName(const std::string& str) {
+	if (!str.empty())
+		_serverName.push_back(str);
 }
 
-void	Server::setPort(const std::string& p) {
-	if (!p.empty())
-		_port = std::atoi(p.c_str());
+void	Server::setPort(const std::string& str) {
+	if (!str.empty())
+		_port = std::atoi(str.c_str());
 }
 
-void	Server::setHost(const std::string& h) {
-	if (!h.empty())
-		_host = h;
+void	Server::setHost(const std::string& str) {
+	if (!str.empty())
+		_host = str;
 }
 
-void	Server::setSize(const std::string& s) {
-	if (!s.empty()) {
+void	Server::setSize(const std::string& str) {
+	if (!str.empty()) {
 		char*	endptr;
-		long	temp = strtol(s.c_str(), &endptr, 10);
+		long	temp = strtol(str.c_str(), &endptr, 10);
 
 		if (temp > 0 && *endptr != '\0') {
 			std::string unit;
@@ -61,45 +61,45 @@ void	Server::setSize(const std::string& s) {
 	}
 }
 
-void	Server::setRoot(const std::string& r) {
-	if (!r.empty())
-		_root = r;
+void	Server::setRoot(const std::string& str) {
+	if (!str.empty())
+		_root = str;
 }
 
-void	Server::setError(const std::string& e) {
-	if (!e.empty()) {
+void	Server::setError(const std::string& str) {
+	if (!str.empty()) {
 		std::string	key;
 		std::string	value;
 		size_t		i = 0;
 
-		while (i < e.length() && !isspace(e[i]) && e[i] != ';')
-			key += e[i++];
-		if (key.empty() || e[i] == ';')
+		while (i < str.length() && !isspace(str[i]) && str[i] != ';')
+			key += str[i++];
+		if (key.empty() || str[i] == ';')
 			return ; // < throw expected
-		while (i < e.length() && isspace(e[i]))
+		while (i < str.length() && isspace(str[i]))
 			i++;
-		while (i < e.length() && e[i] != ';')
-			value += e[i++];
+		while (i < str.length() && str[i] != ';')
+			value += str[i++];
 		if (value.empty())
 			return ; // < throw expected
 		_errorPage[key] = value;
 	}
 }
 
-void	Server::setIndex(const std::string& i) {
-	if (!i.empty()) {
+void	Server::setIndex(const std::string& str) {
+	if (!str.empty()) {
 		std::string	temp;
 		size_t		idx = 0;
 
-		while (idx < i.length()) {
-			if (isspace(i[idx]) || i[idx] == ';') {
+		while (idx < str.length()) {
+			if (isspace(str[idx]) || str[idx] == ';') {
 				if (!temp.empty()) {
 					_index.push_back(temp);
 					temp.clear();
 				}
-				if (i[idx] == ';') break;
+				if (str[idx] == ';') break;
 			} else {
-				temp += i[idx];
+				temp += str[idx];
 			}
 			idx++;
 		}
@@ -109,4 +109,34 @@ void	Server::setIndex(const std::string& i) {
 		if (_index.empty())		
 			return ;// < throw expected
 	}
+}
+
+void	Server::setAutoidx(const std::string& str) {
+	if (str == "on")
+		_autoidx = true;
+	else
+		_autoidx = false;
+}
+
+void	Server::setMethods(const std::string& str) {
+	std::string	temp;
+	size_t		i = 0;
+
+	while (i < str.length() && isspace(str[i]) && str[i] != ';')
+		i++;
+	if (str[i] == '\0' || str[i] == ';')
+		return ; // < throw expected
+	while (i < str.length() && str[i] != ';') {
+		while (i < str.length() && isspace(str[i]))
+			i++;
+		while (i < str.length() && str[i] != ';' && !isspace(str[i]) ) {
+			temp += str[i++];
+		}
+		if (temp.empty())
+			return ; // < throw expected
+		_methods.push_back(temp);
+		temp.clear();
+	}
+	if (str[i] == ';' && str[i + 1] != '\0')
+		return ; // < throw expected
 }

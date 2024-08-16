@@ -22,15 +22,15 @@ class Server
 		Server(const Server& rhs);
 		Server& operator=(const Server& rhs);
 
-		void	setName(const std::string& n);
-		void	setPort(const std::string& p);
-		void	setHost(const std::string& h);
-		void	setSize(const std::string& s);
-		void	setRoot(const std::string& r);
-		void	setError(const std::string& e);
-		void	setIndex(const std::string& i);
-		void	setAutoidx(const std::string& ai);
-		void	setMethods(const std::string& m);
+		void	setName(const std::string& str);
+		void	setPort(const std::string& str);
+		void	setHost(const std::string& str);
+		void	setSize(const std::string& str);
+		void	setRoot(const std::string& str);
+		void	setError(const std::string& str);
+		void	setIndex(const std::string& str);
+		void	setAutoidx(const std::string& str);
+		void	setMethods(const std::string& str);
 };
 
 #endif
