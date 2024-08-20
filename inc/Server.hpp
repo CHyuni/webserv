@@ -3,18 +3,23 @@
 
 #include "Webserv.hpp"
 
+class Location;
+
 class Server
 {
 	protected:
 		std::vector<std::string>	_serverName;
-		u_int16_t					_port;
+		std::vector<u_int16_t>		_port;
 		std::string					_host;
 		long						_maxBodySize;
 		std::string					_root;
 		std::vector<std::string>	_methods;
 		bool						_autoidx;
 		std::vector<std::string>	_index;
-		std::map<std::string, std::string>	_errorPage;
+		std::map<std::string, std::vector<std::string> >	_errorPage;
+	
+	private:
+		std::map<std::string, Location*> locationMap;
 
 	public:
 		Server();

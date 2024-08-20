@@ -7,5 +7,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <sys/types.h>
+#include <cstdlib>
 
 #endif

@@ -9,7 +9,7 @@ private:
 	std::string _path;
 
 public:
-	Location() : _path("/") {};
+	Location() {};
 	Location(const Location& other) : Server(other), _path(other._path) {};
 	Location& operator=(const Location& other) {
 		if (this != &other) {
@@ -20,7 +20,7 @@ public:
 	}
 	virtual ~Location() {};
 
-	void	setPath(const std::string& p);
+	void	setPath(const std::string& path);
 };
 
 #endif
