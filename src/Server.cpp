@@ -2,23 +2,17 @@
 #include "../inc/Location.hpp"
 
 Server::Server()
-	: _serverName(), _port(0), _host(0), _maxBodySize(1024 * 1024), _root(0), 
-	_methods(), _autoidx(false), _index(), _errorPage() {}
+	: _serverName(), _port(), _host(""), _maxBodySize(1024 * 1024), _root(""), 
+	_methods(), _autoidx(false), _index(), _errorPage(), _locationMap() {}
 
-Server::~Server(){
-	std::map<std::string, Location*>::iterator it;
-	for (it = locationMap.begin(); it != locationMap.end(); ++it) {
-		delete it->second;
-	}
-	locationMap.clear();
-}
+Server::~Server(){}
 
 Server::Server(const Server& rhs)
 	: _serverName(rhs._serverName), _port(rhs._port), _host(rhs._host), _maxBodySize(rhs._maxBodySize), _root(rhs._root), 
 	_methods(rhs._methods), _autoidx(rhs._autoidx), _index(rhs._index), _errorPage(rhs._errorPage) {
-		std::map<std::string, Location*>::const_iterator it;
-		for (it = rhs.locationMap.begin(); it != rhs.locationMap.end(); ++it)
-			locationMap[it->first] = new Location(*(it->second));
+		std::map<std::string, Location>::const_iterator it;
+		for (it = rhs._locationMap.begin(); it != rhs._locationMap.end(); ++it)
+			_locationMap[it->first] = it->second;
 	}
 
 Server&	Server::operator=(const Server& rhs) {
@@ -32,16 +26,10 @@ Server&	Server::operator=(const Server& rhs) {
 		_autoidx = rhs._autoidx;
 		_index = rhs._index;
 		_errorPage = rhs._errorPage;
-
-		std::map<std::string, Location*>::iterator it;
-        for (it = locationMap.begin(); it != locationMap.end(); ++it) {
-            delete it->second;
-        }
-        locationMap.clear();
-
-		std::map<std::string, Location*>::const_iterator rhs_it;
-        for (rhs_it = rhs.locationMap.begin(); rhs_it != rhs.locationMap.end(); ++rhs_it) {
-            locationMap[rhs_it->first] = new Location(*(rhs_it->second));
+        _locationMap.clear();
+		std::map<std::string, Location>::const_iterator rhs_it;
+        for (rhs_it = rhs._locationMap.begin(); rhs_it != rhs._locationMap.end(); ++rhs_it) {
+            _locationMap[rhs_it->first] = rhs_it->second;
         }
 	}
 	return *this;
@@ -218,7 +206,7 @@ void	Server::setRoot(const std::string& str) {
 	size_t		i = 0;
 	while (i < str.length() && std::isspace(str[i]))
 		i++;
-	while (i < str.length() && !std::isspace(str[i]) && !str[i] != ';')
+	while (i < str.length() && !std::isspace(str[i]) && str[i] != ';')
 		temp += str[i++];
 	_root = temp;
 }
@@ -304,4 +292,70 @@ void	Server::setMethods(const std::string& str) {
 	}
 	if (_methods.empty())
 		return ;// < throw expected
+}
+
+void	Server::setLocation(const std::string& str, const Location& loca) {
+	_locationMap[str] = loca;
+};
+
+std::string	Server::getName(size_t i) {
+	if (_serverName.empty())
+		return "server_name empty.";
+	return _serverName[i];
+}
+
+u_int16_t	Server::getPort(size_t i) {
+	if (_port.empty())
+		return 0;
+	return _port[i];
+}
+
+std::string	Server::getHost() {
+	if (_host.empty())
+		return "host empty.";
+	return _host;
+};
+
+long		Server::getSize() {
+	return _maxBodySize;
+};
+
+std::string	Server::getRoot() {
+	if (_root.empty())
+		return "root empty.";
+	return _root;
+};
+
+std::string	Server::getMethods(size_t i) {
+	if (_methods.empty())
+		return "methods empty.";
+	return _methods[i];
+};
+
+bool		Server::getAutoidx() {
+	return _autoidx;
+};
+
+std::string	Server::getIndex(size_t i) {
+	if (_index.empty())
+		return "Error: index empty.";
+	return _index[i];
+};
+
+std::string	Server::getError(const std::string& rhs, size_t i) {
+	if (_errorPage.empty())
+		return "ErrorPage empty.";
+	if (_errorPage.find(rhs) == _errorPage.end())
+		return "Not found key.";
+	std::vector<std::string> temp = _errorPage[rhs];
+	return	temp[i];
+};
+
+Location Server::getLocation(const std::string& rhs) {
+	if (_locationMap.empty())
+		throw std::invalid_argument("LocationMap empty.");
+	if (_locationMap.find(rhs) == _locationMap.end())
+		throw std::invalid_argument("Key invalid.");
+	Location temp = _locationMap[rhs];
+	return temp;
 }

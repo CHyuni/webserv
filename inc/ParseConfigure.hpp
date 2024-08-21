@@ -3,6 +3,8 @@
 
 #include "Webserv.hpp"
 
+class Server;
+
 class ParseConfigure
 {
 private:
@@ -20,10 +22,11 @@ public:
 	};
 
 	void				splitServer(const std::string& rhs);
-	bool				checkLine(const std::string& rhs);
+	bool				checkLine(const std::string& rhs, bool& loca, bool& loca2);
 	std::string			lineGet(const std::string& rhs);
 	std::string			getServer(const size_t& i);
 	size_t				serverSize();
+	static void			sendLine(Server& web, const std::string& str);
 };
 
 
