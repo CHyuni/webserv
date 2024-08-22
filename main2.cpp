@@ -113,8 +113,8 @@ int main() {
             socklen_t client_len = sizeof(client_addr);
             int client_sock = accept(listen_sock, (struct sockaddr*)&client_addr, &client_len);
             if (client_sock > 0) {
-                int flgas = fcntl(client_sock, F_GETFL, 0);
-                fcntl(client_sock, F_SETFL, flags | O_NONBLOCK);
+                int client_flags = fcntl(client_sock, F_GETFL, 0);
+                fcntl(client_sock, F_SETFL, client_flags | O_NONBLOCK);
 
                 struct pollfd client_pollfd;
                 client_pollfd.fd = client_sock;

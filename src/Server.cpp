@@ -298,45 +298,45 @@ void	Server::setLocation(const std::string& str, const Location& loca) {
 	_locationMap[str] = loca;
 };
 
-std::string	Server::getName(size_t i) {
+std::string	Server::getName(size_t i) const {
 	if (_serverName.empty())
 		return "server_name empty.";
 	return _serverName[i];
 }
 
-u_int16_t	Server::getPort(size_t i) {
+u_int16_t	Server::getPort(size_t i) const {
 	if (_port.empty())
 		return 0;
 	return _port[i];
 }
 
-std::string	Server::getHost() {
+std::string	Server::getHost() const {
 	if (_host.empty())
 		return "host empty.";
 	return _host;
 };
 
-long		Server::getSize() {
+long		Server::getSize() const {
 	return _maxBodySize;
 };
 
-std::string	Server::getRoot() {
+std::string	Server::getRoot() const {
 	if (_root.empty())
 		return "root empty.";
 	return _root;
 };
 
-std::string	Server::getMethods(size_t i) {
+std::string	Server::getMethods(size_t i) const {
 	if (_methods.empty())
 		return "methods empty.";
 	return _methods[i];
 };
 
-bool		Server::getAutoidx() {
+bool		Server::getAutoidx() const {
 	return _autoidx;
 };
 
-std::string	Server::getIndex(size_t i) {
+std::string	Server::getIndex(size_t i) const {
 	if (_index.empty())
 		return "Error: index empty.";
 	return _index[i];
@@ -358,4 +358,8 @@ Location Server::getLocation(const std::string& rhs) {
 		throw std::invalid_argument("Key invalid.");
 	Location temp = _locationMap[rhs];
 	return temp;
+}
+
+size_t	Server::getPortSize() const {
+	return _port.size();
 }

@@ -8,6 +8,12 @@
 #include <string>
 #include <map>
 #include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
 #include <cstdlib>
+#include <fcntl.h>
+#include <cstring>
+#include <arpa/inet.h>
+#include <poll.h>
 
 #endif

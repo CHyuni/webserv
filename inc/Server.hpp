@@ -27,16 +27,17 @@ class Server
 		Server(const Server& rhs);
 		Server& operator=(const Server& rhs);
 
-		std::string	getName(size_t i);
-		u_int16_t	getPort(size_t i);
-		std::string	getHost();
-		long		getSize();
-		std::string	getRoot();
-		std::string	getMethods(size_t i);
-		bool		getAutoidx();
-		std::string	getIndex(size_t i);
-		std::string	getError(const std::string& rhs, size_t i);
-		Location	getLocation(const std::string& str);
+		std::string	getName(size_t i) const;
+		u_int16_t	getPort(size_t i) const;
+		std::string	getHost() const;
+		long		getSize() const;
+		std::string	getRoot() const;
+		std::string	getMethods(size_t i) const;
+		bool		getAutoidx() const;
+		std::string	getIndex(size_t i) const;
+		std::string	getError(const std::string& rhs, size_t i) ;
+		Location	getLocation(const std::string& str) ;
+		size_t		getPortSize() const;
 
 		void	setName(const std::string& str);
 		void	setPort(const std::string& str);
