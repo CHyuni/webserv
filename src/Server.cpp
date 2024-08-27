@@ -145,11 +145,10 @@ void	Server::setHost(const std::string& str) {
 			i++;
 			while (i < str.length() && std::isspace(str[i]))
 				i++;
-			if (i < str.length())
+			if (i < str.length()) 
 				return ; // throw expected
-		} else {
+		} else
 			return ; // throw expected
-		}
 	}
 	if (!temp.empty()) {
 		char* endptr;
@@ -169,7 +168,7 @@ void	Server::setHost(const std::string& str) {
 				}
 			}
 		}
-		_serverName.push_back(temp);
+		_host = temp;
 	} else
 		return ; // throw expected
 }
@@ -362,4 +361,8 @@ Location Server::getLocation(const std::string& rhs) {
 
 size_t	Server::getPortSize() const {
 	return _port.size();
+}
+
+size_t Server::getNameSize() const {
+	return _serverName.size();
 }

@@ -15,5 +15,6 @@
 #include <cstring>
 #include <arpa/inet.h>
 #include <poll.h>
+#include <unistd.h>
 
 #endif

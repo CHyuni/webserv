@@ -1,3 +1,4 @@
+#include "inc/ServerSocket.hpp"
 #include "inc/Webserv.hpp"
 #include "inc/Location.hpp"
 #include "inc/ParseConfigure.hpp"
@@ -41,6 +42,9 @@ int main(int argc, char* argv[]) {
 			}
 			webServer.push_back(temp);
 		}
+		ServerSocket a;
+		a.serverSockSet(webServer);
+		a.connectClient(webServer);
 	} catch (const std::exception& e) {
 		std::cout << e.what() << std::endl;
 	}

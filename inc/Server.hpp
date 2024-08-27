@@ -38,6 +38,7 @@ class Server
 		std::string	getError(const std::string& rhs, size_t i) ;
 		Location	getLocation(const std::string& str) ;
 		size_t		getPortSize() const;
+		size_t		getNameSize() const;
 
 		void	setName(const std::string& str);
 		void	setPort(const std::string& str);

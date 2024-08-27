@@ -93,7 +93,9 @@ size_t ParseConfigure::serverSize() {
 }
 
 void ParseConfigure::sendLine(Server& web, const std::string& str) {
-	size_t pos = str.find(" ") + 1;
+	size_t pos = 0;
+	while (pos < str.size() && !isspace(str[pos]))
+		++pos;
 	if (!str.compare(0, 11, "server_name"))
 		web.setName(str.substr(pos));
 	else if (!str.compare(0, 6, "listen"))

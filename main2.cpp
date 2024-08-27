@@ -131,7 +131,7 @@ int main() {
 
                 if (valread > 0) {
                     buffer[valread] = '\0';
-                    std::cout << "Received: " << buffer << std::endl;
+                    std::cout << "Received\n" << buffer << std::endl;
                     response_needed[i] = true;
                     fds[i].events |= POLLOUT;
                     // std::string temp;
