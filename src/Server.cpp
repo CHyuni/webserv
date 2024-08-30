@@ -354,7 +354,7 @@ Location Server::getLocation(const std::string& rhs) {
 	if (_locationMap.empty())
 		throw std::invalid_argument("LocationMap empty.");
 	if (_locationMap.find(rhs) == _locationMap.end())
-		throw std::invalid_argument("Key invalid.");
+		return Location();
 	Location temp = _locationMap[rhs];
 	return temp;
 }
@@ -363,6 +363,16 @@ size_t	Server::getPortSize() const {
 	return _port.size();
 }
 
-size_t Server::getNameSize() const {
+size_t	Server::getNameSize() const {
 	return _serverName.size();
+}
+
+size_t	Server::getIndexSize() const {
+	return _index.size();
+}
+
+bool	Server::findLocation(std::string key) {
+	std::map<std::string, Location>::iterator it = _locationMap.find(key);
+	if (it != _locationMap.end()) return true;
+	return false;
 }

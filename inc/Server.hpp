@@ -35,10 +35,11 @@ class Server
 		std::string	getMethods(size_t i) const;
 		bool		getAutoidx() const;
 		std::string	getIndex(size_t i) const;
-		std::string	getError(const std::string& rhs, size_t i) ;
-		Location	getLocation(const std::string& str) ;
+		std::string	getError(const std::string& rhs, size_t i);
+		Location	getLocation(const std::string& str);
 		size_t		getPortSize() const;
 		size_t		getNameSize() const;
+		size_t		getIndexSize() const;
 
 		void	setName(const std::string& str);
 		void	setPort(const std::string& str);
@@ -50,6 +51,8 @@ class Server
 		void	setAutoidx(const std::string& str);
 		void	setMethods(const std::string& str);
 		void	setLocation(const std::string& str, const Location& loca);
+
+		bool	findLocation(std::string key);
 };
 
 #endif

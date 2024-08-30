@@ -16,5 +16,9 @@
 #include <arpa/inet.h>
 #include <poll.h>
 #include <unistd.h>
+#include <ctime>
+#include <cstddef>
+#include <sys/stat.h>
+#include <algorithm>
 
 #endif

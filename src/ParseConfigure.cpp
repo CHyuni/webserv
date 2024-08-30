@@ -15,8 +15,7 @@ void ParseConfigure::splitServer(const std::string& rhs) {
 	bool			locationCheck2 = false;
 
 	if (!file.is_open()) {
-		std::cout << "openError\n";
-		return ; // << throw expected
+		std::runtime_error("File open Error.");
 	}
 	while (getline(file, line)) {
 		std::string::iterator it = line.begin();
@@ -26,7 +25,7 @@ void ParseConfigure::splitServer(const std::string& rhs) {
 		if (line[0] == '#' || line.empty())
 			continue;
 		if(!checkLine(line, locationCheck, locationCheck2)) {
-			throw std::invalid_argument("invalid");// << throw expected
+			throw std::invalid_argument("Invalid configuer");
 		}
 		if (locationCheck && !locationCheck2)
 				cnt++;
@@ -42,7 +41,7 @@ void ParseConfigure::splitServer(const std::string& rhs) {
 			right++;
 		}
 		if (cnt > 1)
-			throw std::invalid_argument("invalid");
+			throw std::invalid_argument("Invalid configure");
 		temp += line + "\n";
 		if ((left != 0 && right != 0) && left == right) {
 			_server.push_back(temp);
@@ -52,7 +51,7 @@ void ParseConfigure::splitServer(const std::string& rhs) {
 		}
 	}
 	if (left != right) {
-		throw std::invalid_argument("invalid"); // << throw expected
+		throw std::invalid_argument("Invalid configure");
 	}
 }
 
@@ -81,7 +80,7 @@ std::string ParseConfigure::lineGet(const std::string& rhs) {
 	}
 	if (rhs.find("server {") != std::string::npos)
 		return "";
-	return "error"; // << throw expected
+	throw std::invalid_argument("Invalid configure");
 }
 
 std::string ParseConfigure::getServer(const size_t& i) {

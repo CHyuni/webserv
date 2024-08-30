@@ -126,12 +126,13 @@ int main() {
 
         for (size_t i = 1; i < fds.size(); i++) {
             if (fds[i].revents & POLLIN) {
-                char buffer[1024];
-                ssize_t valread = recv(fds[i].fd, buffer, sizeof(buffer) - 1, 0);
+                std::vector<char> buffer(8192);
+                std::vector<char> totalData;
+                ssize_t valread = recv(fds[i].fd, &buffer[0], buffer.size(), 0);
 
                 if (valread > 0) {
-                    buffer[valread] = '\0';
-                    std::cout << "Received\n" << buffer << std::endl;
+                    totalData.insert(totalData.end(), buffer.begin(), buffer.begin() + valread);
+                    std::cout << "Received\n" << &totalData[0] << std::endl;
                     response_needed[i] = true;
                     fds[i].events |= POLLOUT;
                     // std::string temp;
