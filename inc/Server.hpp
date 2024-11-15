@@ -40,6 +40,9 @@ class Server
 		size_t		getPortSize() const;
 		size_t		getNameSize() const;
 		size_t		getIndexSize() const;
+		size_t		getMethodsSize() const;
+		void		getAllErrorPage() const;
+		void		getAllLocation() const;
 
 		void	setName(const std::string& str);
 		void	setPort(const std::string& str);

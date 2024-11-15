@@ -2,11 +2,13 @@
 #include "../inc/Location.hpp"
 #include "../inc/Server.hpp"
 
+// 사용할 헤더들을 배열변수에 담아뒀음 추후 ConfigureFile 유효성 체크 시 반복 후 비교
 const std::string ParseConfigure::validKey[] = {
 		"listen", "server_name", "host", "error_page", "client_max_body_size", 
 		"location", "root", "index", "allow_methods", "autoindex", ""
 };
 
+// Server_Block을 기반으로 분리하기
 void ParseConfigure::splitServer(const std::string& rhs) {
 	std::ifstream	file(rhs.c_str());
 	std::string		temp, line;
@@ -24,12 +26,12 @@ void ParseConfigure::splitServer(const std::string& rhs) {
 		}
 		if (line[0] == '#' || line.empty())
 			continue;
-		if(!checkLine(line, locationCheck, locationCheck2)) {
+		if(!checkLine(line, locationCheck, locationCheck2)) {			//Location 포함 확인을 위해 locationCheck라는 변수를 사용했었음 다듬으면 좋을것같음
 			throw std::invalid_argument("Invalid configuer");
 		}
 		if (locationCheck && !locationCheck2)
 				cnt++;
-		if ((line.find("{") != std::string::npos)) {
+		if ((line.find("{") != std::string::npos)) {					// {, } 등장한 횟수로 참 거짓 판단 했던 버전, 현재 사용중인 Stack을 이용하면 좋을듯
 			left++;
 		}
 		if (line.find("}") != std::string::npos) {
@@ -53,8 +55,12 @@ void ParseConfigure::splitServer(const std::string& rhs) {
 	if (left != right) {
 		throw std::invalid_argument("Invalid configure");
 	}
+	for (size_t i = 0; i < _server.size(); ++i) {
+		std::cout << _server[i] << std::endl;
+	}
 }
 
+// ConfigureFile 유효성 검사, rhs = 각 행에 공백 이후의 문자들
 bool ParseConfigure::checkLine(const std::string& rhs, bool& loca, bool& loca2) {
 	for (int i = 0; !validKey[i].empty(); ++i) {
 		if (rhs.compare(0, validKey[i].length(), validKey[i]) == 0) {
@@ -71,6 +77,7 @@ bool ParseConfigure::checkLine(const std::string& rhs, bool& loca, bool& loca2) 
 	return (rhs == "{" || rhs == "}" || rhs == "server {");
 }
 
+//헤더 이후의 라인을 주려고 했던것 같은데 사용하지 않는중인것 같음 ex) root /val/html 이라면 /val/html만 반환
 std::string ParseConfigure::lineGet(const std::string& rhs) {
 	for (int i = 0; !validKey[i].empty(); ++i) {
 		if (rhs.compare(0, validKey[i].length(), validKey[i]) == 0) {
@@ -83,14 +90,17 @@ std::string ParseConfigure::lineGet(const std::string& rhs) {
 	throw std::invalid_argument("Invalid configure");
 }
 
+//인덱스에 해당하는 Server_block반환
 std::string ParseConfigure::getServer(const size_t& i) {
 	return _server[i];
 }
 
+//Server_Block의 총 사이즈 반환
 size_t ParseConfigure::serverSize() {
 	return _server.size();
 }
 
+//listen 8080 이였다면 listen을 지우고 8080만을 substr 후 서버클래스에 입력한 부분인것 같음 수정이 좀 필요해보임
 void ParseConfigure::sendLine(Server& web, const std::string& str) {
 	size_t pos = 0;
 	while (pos < str.size() && !isspace(str[pos]))

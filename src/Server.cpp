@@ -371,6 +371,30 @@ size_t	Server::getIndexSize() const {
 	return _index.size();
 }
 
+size_t Server::getMethodsSize() const {
+	return _methods.size();
+}
+
+void Server::getAllErrorPage() const {
+	if (_errorPage.empty())
+		return ;
+	for (std::map<std::string, std::vector<std::string> >::const_iterator it = _errorPage.begin(); it != _errorPage.end(); ++it) {
+		if (!it->first.empty()) {
+			std::cout << it->first << "\n";
+			for (size_t i = 0; i < it->second.size(); ++i) {
+				std::cout << it->second[i] << " ";
+			}
+			std::cout << std::endl;
+		}
+	}
+}
+
+void Server::getAllLocation() const {
+	for (std::map<std::string, Location>::const_iterator it = _locationMap.begin(); it != _locationMap.end(); ++it) {
+		std::cout << it->first << " " << it->second.getPath() << std::endl;
+	}
+}
+
 bool	Server::findLocation(std::string key) {
 	std::map<std::string, Location>::iterator it = _locationMap.find(key);
 	if (it != _locationMap.end()) return true;

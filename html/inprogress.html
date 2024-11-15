@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>42Webserv</title>
+
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <div class="background-container">
+            <nav class="authorize">
+                <a href="/html/sign_in">로그인</a>
+                |
+                <a href="/html/signUp">회원가입</a>
+            </nav>
+            <h1 class="head-text">42Webserv</h1>
+        </div>
+        <h2 class="page-content">지역 소개</h2>
+        <div class="squares-container">
+            <div class="shape rounded-square">
+                <div class="shape-title">지역 1</div>
+            </div>
+            <div class="shape rounded-square">
+                <div class="shape-title">지역 2</div>
+            </div>
+            <div class="shape rounded-square">
+                <div class="shape-title">지역 3</div>
+            </div>
+            <div class="shape rounded-square">
+                <div class="shape-title">지역 4</div>
+            </div>
+            <div class="shape rounded-square">
+                <div class="shape-title">지역 5</div>
+            </div>
+            <div class="shape rounded-square" data-href="/home.html">
+                <div class="shape-title">지역 6</div>
+            </div>
+            <script>
+                document.querySelectorAll('.shape').forEach(shape => {
+                    shape.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const href = this.getAttribute('data-href');
+                        
+                        this.classList.add('expanding');
+                        
+                        setTimeout(() => {
+                            window.location.href = href;
+                        }, 500);
+                    });
+                });
+            </script>
+        </div>
+    </body>
+</html>

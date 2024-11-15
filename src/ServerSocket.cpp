@@ -1,8 +1,16 @@
 #include "../inc/ServerSocket.hpp"
 
+// Methods를 비교하기 위한 Methods 리스트
 const std::string ServerSocket::methodList[] = {
 	 "GET", "POST", "DELETE", "PUT", "PATCH", "HEAD", "OPTIONS", "TRACE", "CONNECT", ""
 };
+
+void	ServerSocket::closeClient(size_t index, int fd, std::vector<bool>& response_needed) {
+	close(_fds[index].fd);
+	_fds.erase(_fds.begin() + index);
+	response_needed.erase(response_needed.begin() + index);
+	_cliMap.erase(fd);
+}
 
 void	ServerSocket::serverSockSet(const std::vector<Server>& ser) {
 	std::map<u_int16_t, int> portCheck;
@@ -83,27 +91,37 @@ void	ServerSocket::clientRequest(std::vector<bool>& response_needed, std::vector
 	for (size_t i = size; i < _fds.size();) {
 		Client cli;
 		int fd = _fds[i].fd;
-        if (_fds[i].revents & POLLIN) {
-			std::vector<char> totalData = readClientData(_fds[i].fd, ser, cli);
-			if (totalData.empty()) {
-				close(_fds[i].fd);
-                _fds.erase(_fds.begin() + i);
-                response_needed.erase(response_needed.begin() + i);
-				_cliMap.erase(fd);
+		if (_fds[i].revents & (POLLERR | POLLHUP)) {
+                std::cout << ((_fds[i].revents & POLLERR) ? "Error" : "Connection close") << std::endl;
+				closeClient(i, fd, response_needed);
 				continue;
-			}
-			response_needed[i] = true;
-            _fds[i].events |= POLLOUT;
-			cli.setMethod(determineHttpMethod(totalData));
-			cli.setData(totalData);
-			_cliMap[fd] = cli;
-		}
-        if (_fds[i].revents & POLLOUT && response_needed[i]) {
-            handleHttpMethod(fd, ser);
-			response_needed[i] = false;
-			_fds[i].events &= ~POLLOUT;
         }
-		++i;
+
+		try {
+			if (_fds[i].revents & POLLIN) {
+				std::vector<char> totalData = readClientData(_fds[i].fd, ser, cli);
+				if (totalData.empty()) {
+					closeClient(i, fd, response_needed);
+					continue;
+				}
+				response_needed[i] = true;
+				_fds[i].events |= POLLOUT;
+				cli.setMethod(determineHttpMethod(totalData));
+				cli.setData(totalData);
+				_cliMap[fd] = cli;
+			}
+
+			if (_fds[i].revents & POLLOUT && response_needed[i]) {
+				handleHttpMethod(fd, ser);
+				response_needed[i] = false;
+				_fds[i].events &= ~POLLOUT;
+			}
+			++i;
+		} catch (const std::exception& e) {
+			std::cerr << "Error client " << fd << ": " << e.what() << std::endl;
+			closeClient(i, fd, response_needed);
+			continue;
+		}
     }
 }
 

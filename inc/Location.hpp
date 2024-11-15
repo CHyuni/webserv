@@ -21,7 +21,7 @@ public:
 	}
 	virtual ~Location() {};
 
-	std::string	getPath();
+	std::string	getPath() const;
 	void		setPath(const std::string& path);
 };
 

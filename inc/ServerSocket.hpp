@@ -28,6 +28,7 @@ private:
 	std::string			connectionSelect(int fd);
 	std::string			getContent(const std::string& path);
 	void				uriMapping(int fd, std::vector<Server>& ser);
+	void				closeClient(size_t index, int fd, std::vector<bool>& response_needed);
 	
 public:
 	ServerSocket() : _fds() {};
