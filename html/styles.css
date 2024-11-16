@@ -150,3 +150,89 @@ html, body {
     text-align: center;
 	font-family: 'Ansungtangmyun-ESG', sans-serif;
 }
+
+/* styles.css */
+.page-centered {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  
+  .form-container {
+    background-color: #ffffff;
+    border-radius: 15px; /* 모서리를 둥글게 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+    padding: 30px;
+    width: 300px;
+    text-align: center;
+  }
+  
+  h2 {
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+    text-align: left;
+  }
+  
+  label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+  }
+  
+  input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 10px; /* 입력 상자의 모서리를 둥글게 */
+    box-sizing: border-box;
+  }
+  
+  button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 10px; /* 버튼의 모서리를 둥글게 */
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+  }
+  
+  button:hover {
+    background-color: #45a049;
+  }
+  
+  input[type="password"] {
+    width: 300px;
+  }
+
+  .input-group {
+    display: flex; /* 한 줄에 배치 */
+    gap: 10px; /* 간격 설정 */
+}
+  .input-group input[type="text"] {
+    flex: 1; /* 입력 필드가 가능한 너비를 차지 */
+    width: auto; /* 기존 width 무시 */
+  }
+
+  .btn-check {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap; /* 버튼 텍스트 줄바꿈 방지 */
+  }
+
+  .btn-check:hover {
+    background-color: #0056b3;
+  }

@@ -5,17 +5,20 @@ import os
 try:
 	with open('data.json', 'r') as file:
 		data = json.load(file)
+	user_id = sys.argv[1]
+	user_exists = False
+
+	for user in data:
+		if user['id'] == user_id:
+			user_exists = True
+
+	if user_exists:
+		body = "duplicate"
+		print(f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(body)}\r\n\r\n{body}\r\n\r\n")
+	else:
+		body = "available"
+		print(f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(body)}\r\n\r\n{body}\r\n\r\n")
 
 except FileNotFoundError:
-	print("HTTP/1.1 200 OK\r\nContent-Type: image/jpg\r\n")
-
-# 새로운 데이터 추가
-new_user = {
-	"id": sys.argv[1],
-	"password": sys.argv[2]
-}
-
-data.append(new_user)
-
-with open('data.json', 'w') as file:
-	json.dump(data, file, indent=4)
+	body = "available"
+	print(f"HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {len(body)}\r\n\r\n{body}\r\n\r\n")

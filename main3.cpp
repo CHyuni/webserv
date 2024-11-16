@@ -38,29 +38,29 @@ std::string create_http_response() {
     return response;
 }
 
-std::string create_cookie_http_response() {
-	std::ifstream file("html/inprogress.html");
-    std::string html;
-    std::string line;
-    while (std::getline(file, line)) {
-        html += line + "\n";
-    }
-    std::ostringstream ss;
-    ss << html.size();
+// std::string create_cookie_http_response() {
+// 	std::ifstream file("html/inprogress.html");
+//     std::string html;
+//     std::string line;
+//     while (std::getline(file, line)) {
+//         html += line + "\n";
+//     }
+//     std::ostringstream ss;
+//     ss << html.size();
     
-    std::string response = "HTTP/1.1 200 OK\r\n";
-    response += "Content-Type: text/html\r\n";
-    response += "Content-Length: " + ss.str() + "\r\n";
-	response += "Set-Cookie: guest-id=2144; HttpOnly\r\n";
-	response += "Set-Cookie: lang=ko; Max-Age=30; Path=/\r\n";
-    response += "\r\n";
-    response += html;
-    return response;
-}
+//     std::string response = "HTTP/1.1 200 OK\r\n";
+//     response += "Content-Type: text/html\r\n";
+//     response += "Content-Length: " + ss.str() + "\r\n";
+// 	response += "Set-Cookie: guest-id=2144; HttpOnly\r\n";
+// 	response += "Set-Cookie: lang=ko; Max-Age=30; Path=/\r\n";
+//     response += "\r\n";
+//     response += html;
+//     return response;
+// }
 
 std::string create_image_response() {
     // 바이너리 모드로 파일 열기
-    std::ifstream file("/home/changhyu/st/cursus5/webserv/favi/background.jpg", std::ios::binary);
+    std::ifstream file("favi/background.jpg", std::ios::binary);
     if (!file.is_open()) {
         return ""; // 또는 에러 응답
     }
@@ -88,7 +88,7 @@ std::string create_image_response() {
 
 std::string create_test_image_response() {
     // 바이너리 모드로 파일 열기
-    std::ifstream file("/home/changhyu/st/cursus5/webserv/favi/gyeongju.jpeg", std::ios::binary);
+    std::ifstream file("favi/gyeongju.jpeg", std::ios::binary);
     if (!file.is_open()) {
         return ""; // 또는 에러 응답
     }
@@ -132,9 +132,27 @@ std::string create_signUp_http_response() {
     return response;
 }
 
+std::string create_signIn_http_response() {
+	std::ifstream file("html/signIn.html");
+    std::string html;
+    std::string line;
+    while (std::getline(file, line)) {
+        html += line + "\n";
+    }
+    std::ostringstream ss;
+    ss << html.size();
+    
+    std::string response = "HTTP/1.1 200 OK\r\n";
+    response += "Content-Type: text/html\r\n";
+    response += "Content-Length: " + ss.str() + "\r\n";
+    response += "\r\n";
+    response += html;
+    return response;
+}
+
 std::string create_favi_response() {
 	// 바이너리 모드로 파일 열기
-    std::ifstream file("/home/changhyu/st/cursus5/webserv/favi/favi.ico", std::ios::binary);
+    std::ifstream file("favi/favi.ico", std::ios::binary);
     if (!file.is_open()) {
         return ""; // 또는 에러 응답
     }
@@ -180,13 +198,103 @@ std::string create_css_response() {
 	return response;
 }
 
+std::string dupliCgi(std::string id) {
+    int fd[2];
+    pid_t pid;
+    const char *path = "/usr/bin/python3";
+    const char* argv[] = {
+        "python3",
+        "/home/changhyun/42/cursus5/webserv/duplicateCheck.py",
+        id.c_str(),
+        NULL
+    };
+
+    if (pipe(fd) == -1)
+        throw std::runtime_error("Failed to pipe");
+    pid = fork();
+    if (pid == -1)
+    {
+        close (fd[0]);
+        close (fd[1]);
+        throw std::runtime_error("Failed to fork");
+    }
+    if (pid == 0)
+    {
+        close (fd[0]);
+        if (dup2(fd[1], 1) == -1)
+        {
+            close (fd[1]);
+            throw std::runtime_error("Failed to fork");
+        }
+        close (fd[1]);
+        if (execve(path, (char *const *)argv, NULL) == -1)
+            throw std::runtime_error("Failed to exec");
+    }
+    close(fd[1]);
+    char buffer[4096];
+    std::string res;
+    ssize_t bytes;
+    while ((bytes = read(fd[0], buffer, sizeof(buffer))) > 0)
+        res.append(buffer, bytes);
+    close(fd[0]);
+    std::cout << res << std::endl;
+    int status;
+    waitpid(pid, &status, 0);
+    return res;
+}
+
+std::string signInCgi(std::string id, std::string pass) {
+    int fd[2];
+    pid_t pid;
+    const char *path = "/usr/bin/python3";
+    const char* argv[] = {
+        "python3",
+        "/home/changhyun/42/cursus5/webserv/signIn.py",
+        id.c_str(),
+        NULL
+    };
+
+    if (pipe(fd) == -1)
+        throw std::runtime_error("Failed to pipe");
+    pid = fork();
+    if (pid == -1)
+    {
+        close (fd[0]);
+        close (fd[1]);
+        throw std::runtime_error("Failed to fork");
+    }
+    if (pid == 0)
+    {
+        close (fd[0]);
+        if (dup2(fd[1], 1) == -1)
+        {
+            close (fd[1]);
+            throw std::runtime_error("Failed to fork");
+        }
+        close (fd[1]);
+        if (execve(path, (char *const *)argv, NULL) == -1)
+            throw std::runtime_error("Failed to exec");
+    }
+    close(fd[1]);
+    char buffer[4096];
+    std::string res;
+    ssize_t bytes;
+    while ((bytes = read(fd[0], buffer, sizeof(buffer))) > 0)
+        res.append(buffer, bytes);
+    close(fd[0]);
+    std::cout << res << std::endl;
+    int status;
+    waitpid(pid, &status, 0);
+    return res;
+}
+
 std::string execCgi(std::string id, std::string pass) {
 	int fd[2];
     pid_t pid;
 	const char *path = "/usr/bin/python3";
 	const char* argv[] = {
 		"python3",
-		"/home/changhyu/st/cursus5/webserv/cgi.py",
+		"/home/changhyun/42/cursus5/webserv/signUp.py",
 		id.c_str(),
 		pass.c_str(),
 		NULL
@@ -223,16 +331,7 @@ std::string execCgi(std::string id, std::string pass) {
     std::cout << res << std::endl;
     int status;
     waitpid(pid, &status, 0);
-    std::stringstream full_response;
-    full_response << "HTTP/1.1 200 OK\r\n";
-    if (!strcmp("/usr/bin/python3", path))
-        full_response << "Content-Type: text/html\r\n";
-    else
-        full_response << "Content-Type: image/jpeg\r\n";
-    full_response << "Content-Length: " << res.length() << "\r\n\r\n";
-    full_response << res;
-    std::cout << full_response.str() << std::endl;
-    return full_response.str();
+    return res;
 }
 
 int main() {	
@@ -336,7 +435,7 @@ int main() {
 				static std::unordered_map<int, std::string> pending_responses;
 				
 				if (pending_responses.find(events[i].data.fd) == pending_responses.end()) {
-					if (result[events[i].data.fd].find("GET /styles.css") != std::string::npos) {
+					if (result[events[i].data.fd].find("styles.css HTTP/1.1") != std::string::npos) {
 						pending_responses[events[i].data.fd] = create_css_response();
 					}
 					else if (result[events[i].data.fd].find("GET /favi/background") != std::string::npos) {
@@ -345,20 +444,31 @@ int main() {
 						pending_responses[events[i].data.fd] = create_favi_response();
 					} else if (result[events[i].data.fd].find("GET /favi/gyeongju") != std::string::npos) {
 						pending_responses[events[i].data.fd] = create_test_image_response();
-					// }
-					} else if (result[events[i].data.fd].find("Cookie") == std::string::npos) {
-						pending_responses[events[i].data.fd] = create_cookie_http_response();
-					} else if (result[events[i].data.fd].find("GET /html/signUp") != std::string::npos) {
+					} else if (result[events[i].data.fd].find("GET /html/signIn") != std::string::npos) {
+						pending_responses[events[i].data.fd] = create_signIn_http_response();
+                    }
+					 else if (result[events[i].data.fd].find("GET /html/signUp") != std::string::npos) {
 						pending_responses[events[i].data.fd] = create_signUp_http_response();
 					} else if (result[events[i].data.fd].find("GET /signUp?") != std::string::npos) {
-						std::cout << "\n\n";
-						size_t pos = result[events[i].data.fd].find("GET");
+						size_t pos = result[events[i].data.fd].find("username=");
 						size_t andpos = result[events[i].data.fd].find("&");
-						std::string id = result[events[i].data.fd].substr(pos + 15, 1);
+						std::string id = result[events[i].data.fd].substr(pos + 9, andpos - (pos + 9));
 						size_t spacepos = result[events[i].data.fd].find(" ", andpos);
-						std::string pass = result[events[i].data.fd].substr(andpos + 10, 1);
+						std::string pass = result[events[i].data.fd].substr(andpos + 10, spacepos - (andpos + 10));
 						pending_responses[events[i].data.fd] = execCgi(id, pass);
-					}
+					} else if (result[events[i].data.fd].find("GET /check-username") != std::string::npos) {
+                        size_t pos = result[events[i].data.fd].find("=");
+                        size_t pos2 = result[events[i].data.fd].find(" ", pos);
+                        std::string id = result[events[i].data.fd].substr(pos + 1, pos2 - (pos + 1));
+                        pending_responses[events[i].data.fd] = dupliCgi(id);
+                    } else if (result[events[i].data.fd].find("GET /signUp?") != std::string::npos) {
+                        size_t pos = result[events[i].data.fd].find("username=");
+						size_t andpos = result[events[i].data.fd].find("&");
+						std::string id = result[events[i].data.fd].substr(pos + 9, andpos - (pos + 9));
+						size_t spacepos = result[events[i].data.fd].find(" ", andpos);
+						std::string pass = result[events[i].data.fd].substr(andpos + 10, spacepos - (andpos + 10));
+						pending_responses[events[i].data.fd] = (id, pass);
+                    }
 					else {
 						pending_responses[events[i].data.fd] = create_http_response();
 					}
