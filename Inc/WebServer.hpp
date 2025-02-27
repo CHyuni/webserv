@@ -15,7 +15,7 @@
 #include <sys/epoll.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <string.h>
+#include <string>
 #include <netdb.h> 
 #include <algorithm>
 #include <string>
@@ -23,6 +23,7 @@
 #include <dirent.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <ctime>
 # include "../UtilityHeader/Utility.hpp"
 
 

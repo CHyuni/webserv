@@ -38,8 +38,6 @@ $(NAME) :
 	@make start --no-print-directory
 	@$(C++) $(CFLAGS) $(OBJS) -iquote $(INC_DIR) -o $(NAME)
 	@echo "  Completed! "
-	chmod +x start.sh
-	bash start.sh
 
 start : $(OBJS)
 

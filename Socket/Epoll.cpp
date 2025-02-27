@@ -1,11 +1,11 @@
  #include "Epoll.hpp"
 
 
-Epoll::Epoll(const Conf& config) : _config(config.getServerBlocks()), _epollfd(0), _socket(), _result(), _pendingResponses()
+Epoll::Epoll(const Conf& config) : _config(config.getServerBlocks()), _epollfd(0), _socket(), _result(), _time()
 {
 }
 
-Epoll::Epoll(const Epoll &other) : _config(other._config), _epollfd(other._epollfd), _socket(other._socket), _result(other._result), _pendingResponses(other._pendingResponses)
+Epoll::Epoll(const Epoll &other) : _config(other._config), _epollfd(other._epollfd), _socket(other._socket), _result(other._result), _time(other._time)
 {
 }
 
@@ -16,7 +16,7 @@ Epoll &Epoll::operator&=(const Epoll &other)
         _epollfd = other._epollfd;
         _socket = other._socket;
         _result = other._result;
-        _pendingResponses = other._pendingResponses;
+        _time = other._time;
     }
     return *this;
 }
@@ -24,6 +24,19 @@ Epoll &Epoll::operator&=(const Epoll &other)
 Epoll::~Epoll()
 {
 
+}
+
+time_t Epoll::getTime(int fd) {
+    std::map<int, time_t>::iterator it = _time.find(fd);
+    if (it != _time.end()) {
+        return it->second;
+    } else {
+        return 0;
+    }
+}
+
+void Epoll::setTimeOut(int fd) {
+    _time[fd] = time(NULL);
 }
 
 void Epoll::closeFd()
@@ -134,8 +147,11 @@ void Epoll::handleRead(int &fd)
     int bytesRead = recv(fd, buffer, sizeof(buffer), 0);
     Response response;
     int error = 0;
+    time_t _curtime = time(NULL);
+    if (getTime(fd) == 0) setTimeOut(fd);
 
     if (bytesRead > 0) {
+        setTimeOut(fd);
         _result[fd].append(buffer, bytesRead);
         size_t pos = _result[fd].find("\r\n\r\n");
         if (_result[fd].size() >= 4 && pos != std::string::npos) {
@@ -195,18 +211,23 @@ void Epoll::handleRead(int &fd)
         close(fd);
     }
     else {
-        std::cout << "error: " << strerror(errno) << "\n";
-        epoll_ctl(_epollfd, EPOLL_CTL_DEL, fd, NULL);
-        close(fd);
+        if (_curtime - getTime(fd) > 600) {
+            std::cout << "error:2 " << strerror(errno) << "\n";
+            epoll_ctl(_epollfd, EPOLL_CTL_DEL, fd, NULL);
+            close(fd);
+        }
     }
 }
 
 void Epoll::handleWrite(int &fd)
 {
+    if (getTime(fd) == 0) setTimeOut(fd);
+    time_t _curtime = time(NULL);
     int bytes_sent = send(fd, responseMessage[fd].c_str(), responseMessage[fd].size(), 0);
 
     if (bytes_sent > 0)
     {
+        setTimeOut(fd);
         responseMessage[fd] = responseMessage[fd].substr(bytes_sent);
 
         if (responseMessage[fd].empty())
@@ -223,9 +244,11 @@ void Epoll::handleWrite(int &fd)
         close(fd);
     }
     else {
-        std::cout << "error: " << strerror(errno) << "\n";
-        epoll_ctl(_epollfd, EPOLL_CTL_DEL, fd, NULL);
-        close(fd);
+        if (_curtime - getTime(fd) > 600) {
+            std::cout << "error:3 " << strerror(errno) << "\n";
+            epoll_ctl(_epollfd, EPOLL_CTL_DEL, fd, NULL);
+            close(fd);
+        }
     }
 }
 

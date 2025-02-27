@@ -66,12 +66,17 @@ try:
 		cookie = "\r\n"
 
 		user = None
+		user_exists = None
 		for u in data.get("users", []):
 			if u['id'] == user_id:
 				user = u
 				break
-
 		if user:
+			hashed_pwd = hashlib.sha256((user_pwd + user['salt']).encode()).hexdigest()
+			if user['password'] == hashed_pwd:
+				user_exists = True
+
+		if user_exists:
 			match = 0
 			for i, item in enumerate(data.get("sessions", [])):
 				if item['id'] == user_id:
@@ -80,7 +85,6 @@ try:
 					else:
 						match = 1
 					break
-			hashed_pwd = hashlib.sha256((user_pwd + user['salt']).encode()).hexdigest()
 			if match == 0:
 				session_id = generate_session_id(user_id)
 				path = 302

@@ -377,6 +377,8 @@ void Conf::updateLoc(Location &loc)
             throw std::runtime_error("empty root or alias");
         loc.setRoot(firstLoc.getRoot());
     }
+    if (firstLoc.getAutoindex() == true && loc.getAutoindex() == false)
+        loc.setAutoindex("true");
     if (loc.getMethods().empty())
     {
         std::vector<std::string> tmp = firstLoc.getMethods();
@@ -401,7 +403,20 @@ void Conf::updateLoc(Location &loc)
             loc.setIndex(tmp[i]);
         }
     }
-
+    if (loc.getRedirect().empty())
+    {
+        if (firstLoc.getRedirect().empty() == false)
+            loc.setRedirect(firstLoc.getRedirect());
+    }
+    if (loc.getCgi().empty())
+    {
+        if (firstLoc.getCgi().empty() == false)
+            loc.setCgi(firstLoc.getCgi()[0]);
+    }
+    if (firstLoc.getAutoindex() == true && loc.getAutocheck() != "check" && loc.getAutoindex() == false)
+    {
+        loc.setAutoindex("on");
+    }
     for (size_t i = 0; firstLoc.getErrmap().size() != i; ++i)
     {
         int flag = 0;
@@ -445,9 +460,7 @@ void Conf::organizeServerBlocks()
                 continue;
             }
             updateLoc(_block[i]);
-
-_server.back().push_back(_block[i]);
-
+            _server.back().push_back(_block[i]);
         }
     }
     for (int i = 0; _server[i].size(); ++i)

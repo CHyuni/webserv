@@ -18,6 +18,7 @@ class ServerBlock
         bool						_isServer;
 		bool						_isAuto;
         std::string _alias;
+        std::string _autocheck;
         static const unsigned int MAX_BODY_SIZE = 2097152; 
     public :
         ServerBlock();
@@ -32,7 +33,7 @@ class ServerBlock
         bool setClientMaxBodySize(const std::string &value);
         void setMaxBodySize(const unsigned int &value);
 const std::vector<std::string> &getErrmap() const;
-
+const std::string &getAutocheck() const;
         bool setErrorPage(const std::string& num, const std::string& page);
         bool setRoot(const std::string& root);
         bool setIndex(const std::string& index);

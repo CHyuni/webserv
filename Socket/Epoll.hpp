@@ -6,8 +6,6 @@
 // #include "../MethodHeader/GetHandler.hpp"
 #include "../ResponseHeader/Response.hpp"
 
-
-
 class Epoll 
 {
     private :
@@ -20,7 +18,7 @@ class Epoll
         std::map<int, size_t> currentLeng;
         std::map<int, Request> request;
 
-        std::map<int, std::string> _pendingResponses;
+        std::map<int, time_t> _time;
         std::map<int, std::string> responseMessage;
 
     public :
@@ -40,6 +38,8 @@ class Epoll
         void handleClose(int &fd);
         void closeFd();
         void redirect(int &fd);
+        time_t getTime(int fd);
+        void setTimeOut(int fd);
 };
 
 #endif

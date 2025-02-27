@@ -16,7 +16,7 @@ ServerBlock::ServerBlock() : _host(""), _port(), _server(), _size(0),
 
 ServerBlock::ServerBlock(const ServerBlock &other): _host(other._host), _port(other._port), _server(other._server), _size(other._size),
  _root(other._root), _methods(other._methods), _autoidx(other._autoidx), _index(other._index), _error(other._error), _errormap(other._errormap),
- _isServer(other._isServer), _isAuto(other._isAuto),_alias(other._alias)
+ _isServer(other._isServer), _isAuto(other._isAuto),_alias(other._alias), _autocheck(other._autocheck)
 {
 }
 
@@ -152,7 +152,6 @@ bool ServerBlock::setErrorPage(const std::string& num, const std::string& page)
         return false;
     _error[num] = page;
     _errormap.push_back(num);
-    std::cout << "asd" << _errormap.size() <<std::endl;
     // _error.insert(std::make_pair(num, page));
     return true;
 }
@@ -193,12 +192,19 @@ bool ServerBlock::setAutoindex(const std::string& autoindex)
     _isAuto = 1;
     if (autoindex == "on")
         _autoidx = true;
+    else if (autoindex == "off")
+        _autocheck = "check";
     return true;
+}
+const std::string &ServerBlock::getAutocheck() const
+{
+    return _autocheck;
 }
 const std::string &ServerBlock::getHost() const
 {
     return _host;
 }
+
 const std::vector<unsigned int> &ServerBlock::getPort() const
 {
     return _port;
