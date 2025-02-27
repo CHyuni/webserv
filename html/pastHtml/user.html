@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>접속 중인 사용자 목록</title>
+    <style>
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .user-container {
+            background-color: #1E1E1E;
+            border-radius: 12px;
+            width: 350px;
+            max-height: 500px;
+            overflow-y: auto;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .user-header {
+            background-color: #2C2C2C;
+            padding: 15px;
+            text-align: center;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .user-list {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        .user-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid #333;
+        }
+        .user-item:last-child {
+            border-bottom: none;
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 15px;
+            background-color: #444;
+        }
+        .user-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-left: auto;
+        }
+        .online {
+            background-color: #4CAF50;
+        }
+        .offline {
+            background-color: #F44336;
+        }
+        #userCount {
+            background-color: #444;
+            color: #fff;
+            border-radius: 15px;
+            padding: 3px 10px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="user-container">
+        <div class="user-header">
+            <h2>접속 중인 사용자</h2>
+            <div id="userCount">0</div>
+        </div>
+        <ul class="user-list" id="userList"></ul>
+    </div>
+
+    <script>
+        const users = [
+            { id: 1, name: '김철수', status: 'online', avatarUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9IiM2NjYiPjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0wIDNjMS42NiAwIDMgMS4zNCAzIDNzLTEuMzQgMy0zIDMtMy0xLjM0LTMtMyAxLjM0LTMgMy0zem0wIDE0LjJqLjc5IDAtMS41Mi0uMjItMi4xMi0uNThDNy43MyAxNS4xNSA5LjcgMTQgMTIgMTRzMi4yNyAxLjE1IDIuMTIgMi42MmMtLjYuMzYtMS4zMy41OC0yLjEyLjU4eiIvPjwvc3ZnPg==' },
+            { id: 2, name: '이영희', status: 'offline', avatarUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9IiM2NjYiPjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0wIDNjMS42NiAwIDMgMS4zNCAzIDNzLTEuMzQgMy0zIDMtMy0xLjM0LTMtMyAxLjM0LTMgMy0zem0wIDE0LjJqLjc5IDAtMS41Mi0uMjItMi4xMi0uNThDNy43MyAxNS4xNSA5LjcgMTQgMTIgMTRzMi4yNyAxLjE1IDIuMTIgMi42MmMtLjYuMzYtMS4zMy41OC0yLjEyLjU4eiIvPjwvc3ZnPg==' },
+            { id: 3, name: '박민수', status: 'online', avatarUrl: 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAiIGhlaWdodD0iMTAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9IiM2NjYiPjxwYXRoIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0wIDNjMS42NiAwIDMgMS4zNCAzIDNzLTEuMzQgMy0zIDMtMy0xLjM0LTMtMyAxLjM0LTMgMy0zem0wIDE0LjJqLjc5IDAtMS41Mi0uMjItMi4xMi0uNThDNy43MyAxNS4xNSA5LjcgMTQgMTIgMTRzMi4yNyAxLjE1IDIuMTIgMi42MmMtLjYuMzYtMS4zMy41OC0yLjEyLjU4eiIvPjwvc3ZnPg==' },
+        ];
+
+        function renderUserList() {
+            const userList = document.getElementById('userList');
+            const userCount = document.getElementById('userCount');
+            
+            // 사용자 목록 렌더링
+            userList.innerHTML = users.map(user => `
+                <li class="user-item">
+                    <span>${user.name}</span>
+                    <div class="user-status ${user.status}"></div>
+                </li>
+            `).join('');
+
+            // 접속자 수 업데이트
+            userCount.textContent = users.length;
+        }
+
+        // 페이지 로드 시 사용자 목록 렌더링
+        renderUserList();
+
+        // 새 사용자 추가 함수 예시
+        function addUser(user) {
+            users.push(user);
+            renderUserList();
+        }
+
+        // 사용자 제거 함수 예시
+        function removeUser(userId) {
+            const index = users.findIndex(user => user.id === userId);
+            if (index !== -1) {
+                users.splice(index, 1);
+                renderUserList();
+            }
+        }
+    </script>
+</body>
+</html>

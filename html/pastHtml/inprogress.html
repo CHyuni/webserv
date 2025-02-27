@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>42Webserv</title>
+
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <div class="background-container">
+            <nav class="authorize" id="login-signup">
+                <a href="/signIn.html">로그인</a>
+                |
+                <a href="/signUp.html">회원가입</a>
+            </nav>
+			<div class="header" id="user-info" style="display:none;">
+				<div class="profile">
+					<img src="image/gyeongju.jpeg" alt="Profile Picture" id="profile-picture" onclick="home()">
+					<!-- <img src="/uploaded/aaa/download.jpeg" alt="Profile Picture" id="profile-picture"> -->
+					<span class="profile-id" id="user-id"></span>
+					<button class="logout-btn" id="logout-button">Logout</button>
+				</div>
+			</div>
+            <h1 class="head-text">42Webserv</h1>
+        </div>
+        <h2 class="page-content">지역 소개</h2>
+        <div class="squares-container">
+            <div class="shape rounded-square" data-href="/cgi.sh">
+                <div class="shape-title">지역 1</div>
+            </div>
+            <div class="shape rounded-square">
+                <div class="shape-title">지역 2</div>
+            </div>
+            <div class="shape rounded-square">
+                <div class="shape-title">지역 3</div>
+            </div>
+            <div class="shape rounded-square">
+                <div class="shape-title">지역 4</div>
+            </div>
+            <div class="shape rounded-square">
+                <div class="shape-title">지역 5</div>
+            </div>
+            <div class="shape rounded-square" data-href="/home.html">
+                <div class="shape-title">지역 6</div>
+            </div>
+            <script>
+				// async function getCookie() {
+				// 	try {
+				// 		const response = await fetch('/get-session/get.py', {
+				// 			method: 'GET'
+				// 		});
+				// 		if (!response.ok) {
+				// 			return null;
+				// 		}
+				// 		const data = await response.text();
+				// 		console.log(data);
+				// 		return data;
+				// 	} catch (error) {
+				// 		console.error('Error fetching session data:', error);
+				// 		return null;
+				// 	}
+				// }
+
+                (async function() {
+					setTimeout(async () => {
+						try {
+							// const session_id = await getCookie();
+							// const response = await fetch(`/check-id/checkId.py?session_id=${session_id}`, {
+							const response = await fetch(`/check-id/checkId.py`, {
+								method: 'GET'
+							});
+	
+							data = await response.json();
+							console.log("data: ", data);
+							if (data.status == 'login') {
+								document.getElementById('login-signup').style.display = 'none';
+								document.getElementById('user-info').style.display = 'block';
+								document.getElementById('user-id').textContent = data.id;
+								const path = data.path ? data.path : ""
+								if (path)
+									document.getElementById("profile-picture").src = path;
+							}
+							else
+							{
+								document.getElementById('login-signup').style.display = 'block';
+								document.getElementById('user-info').style.display = 'none';
+							}
+						} catch(error)
+						{
+							console.log(error);
+							window.location.href = '/error';
+						}
+					}, 10)
+				}());
+
+                function home() {
+					window.location.href = '/home.html';
+				}
+
+                document.getElementById('logout-button').addEventListener('click', async function(event) {
+					event.preventDefault(); // 기본 GET 요청 방지
+
+			        try {
+		                const response = await fetch('/logout/logout.py', {
+		                    method: 'DELETE'
+		                });
+
+		                const result = await response.text();
+						const data = JSON.parse(result).status;
+		                if (data === "success") {
+							window.location.href = '/';
+						}
+						else
+							window.location.href = '/error';
+		            } catch (error) {
+						console.log("error: ", error);
+						window.location.href = '/error';
+		            }
+			    });
+
+                document.querySelectorAll('.shape').forEach(shape => {
+                    shape.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const href = this.getAttribute('data-href');
+                        
+                        this.classList.add('expanding');
+                        
+                        setTimeout(() => {
+                            window.location.href = href;
+                        }, 500);
+                    });
+                });
+            </script>
+        </div>
+    </body>
+</html>

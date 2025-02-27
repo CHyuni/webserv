@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>42Webserv</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav id="nav" class="nav">
+        <button class="auth-button" onclick="openModal('registerModal')">회원가입</button>
+        <button class="auth-button" onclick="openModal('loginModal')">로그인</button>
+    </nav>
+    <nav id="login-nav" class="nav">
+        <button id="logout-button" class="auth-button">로그아웃</button>
+    </nav>
+
+    <div class="main-content">
+        <h1 class="main-title">42Webserv</h1>
+        <div class="user-cgi" id="cgi">
+            <div class="container">
+                <h2 id="profile-text"></h2>
+                <div id="profileImageContainer">
+                    <img id="profileImage" src="./image/default.png" alt="기본 프로필 사진">
+                </div>
+            </div>
+            <div class="subtitle-container">
+                <div class="subtitle" onclick="location.href='/cgi.sh?script=bash'">Cgi 시간</div>
+                <div class="subtitle" onclick="location.href='picture.html'">Cgi 프로필</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <button class="close-button" onclick="closeModal('loginModal')">&times;</button>
+            <h2 style="color: white; text-align: center">로그인</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>아이디</label>
+                    <input id="login-id" class="modal-input" type="text" required>
+                </div>
+                <div class="form-group">
+                    <label>비밀번호</label>
+                    <input id="login-pwd" class="modal-input" type="password" required>
+                </div>
+                <button type="submit" class="submit-button">로그인</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="registerModal" class="modal">
+        <div class="modal-content">
+            <button class="close-button" onclick="closeModal('registerModal')">&times;</button>
+            <h2 style="color: white; text-align: center">회원가입</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <div id="signup-id-header">
+                        <label>아이디</label>
+                        <button type="button" id="signup-id-check" class="signup-id-check">중복 검사</button>
+                    </div>
+                    <input id="signup-id" type="text" required>
+                </div>
+                <div class="form-group">
+                    <label>비밀번호</label>
+                    <input id="signup-pwd" type="password" required>
+                </div>
+                <div class="form-group">
+                    <label>비밀번호 확인</label>
+                    <input id="signup-pwd-check" type="password" required>
+                </div>
+                <div class="form-group">
+                    <label>이메일</label>
+                    <input id="signup-email" type="email" required>
+                </div>
+                <button type="submit" id="signup-submit" class="submit-button">회원가입</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        (async function() {
+            setTimeout(async () => {
+                try {
+                    const response = await fetch(`/check-id/checkId.py`, {
+                        method: 'GET'
+                    });
+
+                    data = await response.json();
+                    // console.log("data: ", data);
+                    if (data.status == 'login') {
+                        const path = data.path ? data.path : ''
+                        document.getElementById('nav').style.display = 'none';
+                        document.getElementById('login-nav').style.display = 'block';
+                        document.getElementById('cgi').style.display = 'block';
+                        document.getElementById('profile-text').textContent = '안녕하세요 ' + data.id + '님';
+                        if (path)
+                            document.getElementById('profileImage').src = path;
+                    }
+                    else
+                        document.getElementById('nav').style.display = 'block';
+                } catch(error)
+                {
+                    console.log(error);
+                    window.location.href = '/error';
+                }
+            }, 10)
+        }());
+
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.style.display = 'flex';
+            const inputs = modal.querySelectorAll('input');
+            inputs.forEach(input => {
+                input.value = ''; // 모든 input 값을 빈 문자열로 설정
+            });
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            if (event.target.className === 'modal') {
+                event.target.style.display = 'none';
+            }
+        }
+
+        document.getElementById('loginForm').onsubmit = async function(e) {
+            e.preventDefault();
+
+            if (this.submitted) return;
+			try {
+                this.submitted = true;
+    
+                const usernameInput = document.getElementById('login-id');
+                const passwordInput = document.getElementById('login-pwd');
+                
+                const username = usernameInput.value;
+                const password = passwordInput.value;
+                const requestBody = `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
+
+				const response = await fetch('/signIn/signIn.py', {
+					method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Content-Length': requestBody.length.toString()
+                    },
+                    body: requestBody
+				});
+
+				const result = await response.text();
+				// console.log('회원가입 응답:', result);
+				const data = JSON.parse(result);
+				const status = data.status;
+				if (status === 'success') {
+					alert('로그인 성공');
+					sessionStorage.setItem('id', data.id)
+					window.location.href = '/main.html';
+				} else if (status === 'User not found') {
+					alert('로그인 실패');
+				} else
+                    alert('이미 로그인 중인 아이디입니다.')
+			} catch (error) {
+				console.log(error);
+				alert('로그인 중 오류가 발생했습니다.');
+			} finally {
+				this.submitted = false;
+			}
+        }
+
+        document.getElementById('logout-button').addEventListener('click', async function(event) {
+            try {
+                const response = await fetch('/logout/logout.py', {
+                    method: 'DELETE'
+                });
+
+                const data = await response.text();
+                if (data === 'success') {
+                    window.location.href = '/main.html';
+                }
+                else
+                {
+                    alert("로그아웃 실패");
+                }
+            } catch (error) {
+                console.log('error: ', error);
+                window.location.href = '/error';
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+        const checkButton = document.querySelector('.signup-id-check');
+        const submitButton = document.getElementById('signup-submit');
+        const usernameInput = document.getElementById('signup-id');
+		const passwordInput = document.getElementById('signup-pwd');
+        const passwordCheckInput = document.getElementById('signup-pwd-check');
+        let isUsernameVerified = false;  // 아이디 검증 상태를 저장
+
+        // 처음에는 가입하기 버튼 비활성화
+		checkButton.disabled = true;
+
+        // 아이디 입력창이 변경되면 다시 검증 필요
+        usernameInput.addEventListener('input', function() {
+            isUsernameVerified = false;
+
+			if (usernameInput.value.trim() !== '') {
+				checkButton.disabled = false;
+			} else {
+				checkButton.disabled = true;
+			}
+        });
+
+        // 중복확인 버튼 클릭 이벤트
+        checkButton.addEventListener('click', async function() {
+            if (isUsernameVerified)
+                return;
+            console.log("here\n");
+            const username = usernameInput.value;
+            const regex = /[^a-zA-Z0-9]/;
+            if (regex.test(username))
+            {
+                alert('아이디는 영문과 숫자의 조합으로만 가능합니다.');
+                usernameInput.value = '';
+                return ;
+            }
+            let result = 1;
+            
+            try {
+                const response = await fetch('/check-username/duplicateCheck.py?username=' + username, {
+                    method: 'GET'
+                });
+
+                const status = await response.text();
+
+                if (status === 'available') {
+                    alert('사용 가능한 아이디입니다.');
+                    result = 0;
+                } else if (status === 'duplicate') {
+                    alert('이미 사용중인 아이디입니다.');
+                } else {
+					alert('사용할 수 없는 아이디입니다.');
+				}
+            } catch (error) {
+                alert('확인 중 오류가 발생했습니다.');
+                window.location.href = '/error';
+            }
+            isUsernameVerified = result == 0 ? true : false;
+        });
+
+        // 폼 제출 이벤트
+        document.getElementById('registerForm').addEventListener('submit', async function(event) {
+			event.preventDefault();  // 폼 제출 중지
+
+            if (!isUsernameVerified)
+			{
+				alert('아이디 중복검사를 해주세요.');
+				return;
+			}
+
+            if (this.submitted) return;
+            this.submitted = true;
+
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
+            const passwordCheck = passwordCheckInput.value.trim();
+
+            if (password != passwordCheck) {
+                alert('비밀번호가 일치하지 않습니다.');
+                this.submitted = false; // 제출 상태 해제
+                return;
+            }
+
+            const requestBody = `username=${encodeURIComponent(username)}&password=${encodeURIComponent(password)}`;
+            try {
+                const response = await fetch('/signUp/signUp.py', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Content-Length': requestBody.length.toString(),
+                    },
+                    body: requestBody
+                });
+
+                const result = await response.text();
+                console.log('회원가입 응답:', result);
+                
+                if (result === 'success') {
+                    alert('회원가입에 성공하셨습니다!');
+                    window.location.href = '/main.html';
+                } else {
+                    alert('회원가입에 실패했습니다.');
+                    this.submitted = false;
+                }
+            } catch (error) {
+                alert('회원가입 중 오류가 발생했습니다.');
+                this.submitted = false;
+            }
+        });
+    });
+
+    </script>
+</body>
+</html>

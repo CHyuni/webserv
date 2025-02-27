@@ -1,0 +1,286 @@
+@font-face {
+  font-family: 'Ansungtangmyun-ESG';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_11-01@1.0/Ansungtangmyun-ESG.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Shilla_CultureB-Bold';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_2206-02@1.0/Shilla_CultureB-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'SangSangRock';
+  src: url('https://gcore.jsdelivr.net/gh/projectnoonnu/noonfonts_2001@1.1/SangSangRockOTF.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.background-container {
+  height: auto;
+  background-image: linear-gradient(rgba(255, 255, 255, 0), rgba(255, 255, 255, 1.0)),
+      url(image/background.jpg);
+  background-size: 100% 100%;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+padding: 20px;
+width: 100%;
+box-sizing: border-box;
+  min-height: 27vh;
+}
+
+.head-text {
+  margin: 30px 0 20px 0;
+  font-size: clamp(30px, 5vw, 120px);
+  text-align: center;
+font-family: 'Ansungtangmyun-ESG', sans-serif;
+}
+
+.authorize {
+  margin: 0;
+  position: absolute;
+  font-weight: bold;
+  font-size: clamp(10px, 4vw, 15px);
+  right: 20px;
+  top: 20px;
+  white-space: nowrap;
+}
+
+.authorize a {
+  color: black;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.page-content {
+font-size: 50px;
+text-align: center;
+font-family: 'SangSangRock', sans-serif;
+}
+
+.squares-container {
+display: flex;
+flex-wrap: wrap;
+justify-content: center;
+gap: 30px;
+padding: 20px;
+max-width: 1200px;
+margin: 0 auto;
+}
+
+.shape {
+width: 300px;
+height: 300px;
+background-size: cover;
+background-position: center;
+transition: transform 0.3s ease;
+  
+margin: 10px;
+cursor: pointer;
+position: relative;
+}
+
+.shape:hover {
+transform: scale(1.2);
+z-index: 1;
+}
+
+.rounded-square {
+background-image: url('/api/placeholder/300/300');
+border-radius: 20px;
+box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+background-image: url(image/gyeongju.jpeg);
+}
+
+.shape-title {
+position: absolute;
+bottom: 0;
+left: 0;
+right: 0;
+background: rgba(0,0,0,0.7);
+color: white;
+padding: 10px;
+text-align: center;
+font-family: 'Shilla_CultureB-Bold', sans-serif;
+border-bottom-left-radius: 20px;
+border-bottom-right-radius: 20px;
+}
+
+.shape.expanding {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(20);
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 2.5s ease;
+}
+
+.expanding .shape-title {
+  opacity: 0;
+}
+
+.signUp-container {
+  height: auto;
+  background-color: aquamarine;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 2vh;
+}
+
+.signUpHead {
+  margin: 30px 0 20px 0;
+  font-size: clamp(30px, 5vw, 120px);
+  text-align: center;
+font-family: 'Ansungtangmyun-ESG', sans-serif;
+}
+
+/* styles.css */
+.page-centered {
+  font-family: Arial, sans-serif;
+  background-color: #f7f7f7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+.form-container {
+  background-color: #ffffff;
+  border-radius: 15px; /* 모서리를 둥글게 */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 추가 */
+  padding: 30px;
+  width: 300px;
+  text-align: center;
+}
+
+h2 {
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 10px; /* 입력 상자의 모서리를 둥글게 */
+  box-sizing: border-box;
+}
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 10px; /* 버튼의 모서리를 둥글게 */
+  cursor: pointer;
+  font-size: 16px;
+  width: 100%;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+input[type="password"] {
+  width: 300px;
+}
+
+.input-group {
+  display: flex; /* 한 줄에 배치 */
+  gap: 10px; /* 간격 설정 */
+}
+.input-group input[type="text"] {
+  flex: 1; /* 입력 필드가 가능한 너비를 차지 */
+  width: auto; /* 기존 width 무시 */
+}
+
+.btn-check {
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  white-space: nowrap; /* 버튼 텍스트 줄바꿈 방지 */
+}
+
+.btn-check:hover {
+  background-color: #0056b3;
+}
+
+.header {
+position: fixed;
+top: 10px;
+right: 10px;
+display: flex;
+justify-content: flex-end;
+align-items: center;
+background-color: #f4f4f4;
+padding: 10px 20px;
+border-bottom: 1px solid #ddd;
+border-radius: 10px;
+width: auto;
+}
+.profile {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+.profile img {
+width: 40px;
+height: 40px;
+border-radius: 50%;
+object-fit: cover;
+}
+
+.profile img:hover {
+cursor: pointer;
+transform: scale(1.1);
+}
+
+.profile-id {
+font-size: 14px;
+font-weight: bold;
+color: #333;
+}
+.logout-btn {
+background-color: #ff4b5c;
+color: white;
+border: none;
+border-radius: 5px;
+padding: 5px 10px;
+cursor: pointer;
+font-size: 14px;
+}
+.logout-btn:hover {
+background-color: #e04351;
+}

@@ -1,0 +1,307 @@
+
+       <!-- <script >
+           function deleteFile() {
+               var filename = document.getElementById('deleteFileName').value;
+               if (!filename) {
+                   return;
+               }
+               fetch('http://127.0.0.1:8000/uploaded/' + filename, {
+                   method: 'DELETE'
+               })
+               .then(response => {
+                   document.getElementById('deleteFileName').value = '';  // 입력창 초기화
+               })
+               .catch(error => {
+                   console.error('Error:', error);
+               });
+           }
+       </script>
+ 
+</body>
+   <body>
+       <h1>Test</h1>
+       <p>Hello</p>
+       <form method="POST" enctype="multipart/form-data">
+           <input type="file" name="file" id="imageFileOpenInput" accept="image/*" required>
+           <button type="submit">Upload</button>
+       </form>
+
+       <div>
+           <h3>Delete File</h3>
+           <input type="text" id="deleteFileName" placeholder="Enter filename to delete">
+           <button onclick="deleteFile()">Delete File</button>
+       </div>
+   </body> -->
+
+   <!DOCTYPE html>
+   <html lang="en">
+   <head>
+       <meta charset="UTF-8">
+       <meta name="viewport" content="width=device-width, initial-scale=1.0">
+       <title>profile</title>
+       <link rel="stylesheet" href="styles.css">
+       <style>
+           body {
+           margin: 0;
+           font-family: Arial, sans-serif;
+           display: flex;
+           justify-content: center;
+           align-items: center;
+           height: 100vh;
+           background-color: #f4f4f4;
+       }
+       
+       .profile-container {
+           background-color: #fff; /* 배경색을 흰색으로 */
+       border-radius: 12px;     /* 부드러운 모서리 */
+       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 부드러운 그림자 */
+       padding: 20px;
+       width: 300px; /* 너비 설정 */
+       text-align: center;
+       font-family: Arial, sans-serif; /* 글꼴 설정 */
+       margin: 0 auto; /* 중앙 정렬 */
+       display: flex;
+       flex-direction: column;
+       align-items: center;
+       justify-content: center;
+       }
+       
+       /* 프로필 이미지 스타일 */
+       .profile-picture {
+           width: 150px;
+           height: 150px;
+           border-radius: 50%;
+           overflow: hidden;
+           border: 4px solid #ddd;
+           margin: 0 auto 20px auto; /* 중앙 정렬과 아래 여백 */
+           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+       }
+       
+       .profile-picture img {
+           width: 100%;
+           height: 100%;
+           object-fit: cover; /* 이미지 잘림 방지 */
+       }
+       
+       /* ID 스타일 */
+       .profile-id {
+           font-size: 18px;
+           color: #333;
+           margin-bottom: 20px;
+       }
+       
+       /* 파일 선택 버튼 스타일 */
+       #custom-file-button {
+           background-color: #007bff;
+           color: white;
+           border: none;
+           padding: 10px 15px;
+           border-radius: 4px;
+           cursor: pointer;
+           font-size: 14px;
+       }
+       
+       #custom-file-button:hover {
+           background-color: #0056b3;
+       }
+       </style>
+   </head>
+   <body>
+       <div id="background" class="background-container" style="display: none;">
+           <div class="header" id="user-info">
+               <div class="profile">
+                   <img src="image/gyeongju.jpeg" alt="Profile Picture" id="profile-picture" onclick="home()">
+                   <span class="profile-id" id="user-id"></span>
+                   <button class="logout-btn" id="logout-button">Logout</button>
+               </div>
+           </div>
+           <div id="profile-container" class="profile-container">
+               <div class="profile-picture" id="profile-picture">
+                   <img src="image/gyeongju.jpeg" alt="프로필 이미지" id="profile-image">
+               </div>
+               <p class="profile-id" id="profile-id"></p>
+               <form id="upload-form" method="POST" enctype="multipart/form-data">
+                   <input type="file" id="image" name="image" accept="image/*" style="display: none;">
+                   <button type="button" id="custom-file-button">이미지 선택</button>
+                   <button type="submit">저장하기</button>
+               </form>
+               <form id="delete-form" method="DELETE" enctype="multipart/form-data">
+                <button type="submit">기본이미지 선택</button>
+                </form>
+           </div>
+       </div>
+       <!-- <p id="upload-status" style="display: none;"></p>
+       <img id="preview" src="./image/gyeongju.jpeg" alt="기본 이미지"> -->
+   
+       <script>
+           let preData;
+           (async function() {
+               setTimeout(async () => {
+                   try {
+                       const response = await fetch('/check-id/checkId.py', {
+                           method: 'GET'
+                       });
+   
+                       preData = await response.json();
+                       console.log("data: ", preData);
+                       if (preData.status != 'login')
+                           window.location.href = '/';
+                       else
+                       {
+                           const path = preData.path ? preData.path : ""
+                           if (path)
+                           {
+                               document.getElementById("profile-image").src = path;
+                               document.getElementById("profile-picture").src = path;
+                           }
+                           document.getElementById("background").style.display = "block";
+                           // document.getElementById("profile-container").style.display = "block";
+                           document.getElementById("user-id").textContent = preData.id;
+                           document.getElementById("profile-id").textContent = preData.id + "님의 프로필 배경화면";
+                           // document.getElementById("preview").style.display = "block";
+                       }
+                   } catch(error)
+                   {
+                       console.log(error);
+                       // window.location.href = '/error';
+                   }
+               }, 100)
+           }());
+   
+           const fileInput = document.getElementById('image');
+           const customButton = document.getElementById('custom-file-button');
+           // const customLabel = document.getElementById('custom-file-label');
+           const preview = document.getElementById('profile-image');
+   
+           // 이전 파일 저장
+           let previousFile = null;
+   
+           // 커스텀 버튼 클릭 시 파일 선택 창 열기
+           customButton.addEventListener('click', () => {
+               fileInput.click();
+           });
+   
+           // 파일 선택 시 처리
+           fileInput.addEventListener('change', () => {
+               console.log("previusFile: ", previousFile);
+               if (fileInput.files.length > 0) {
+                   const file = fileInput.files[0];
+                   previousFile = file;
+   
+                   // 파일 이름 및 미리보기 업데이트
+                   // customLabel.textContent = file.name;
+                   const reader = new FileReader();
+                   reader.onload = function(e) {
+                       preview.src = e.target.result;
+                   };
+                   reader.readAsDataURL(file);
+               } else if (previousFile) {
+                   // 취소한 경우 기존 파일 이름과 미리보기 유지
+                   // customLabel.textContent = previousFile.name;
+                   const reader = new FileReader();
+                   reader.onload = function(e) {
+                       preview.src = e.target.result;
+                   };
+                   reader.readAsDataURL(previousFile);
+               } else {
+                   // 기본 상태 유지
+                   // customLabel.textContent = "선택된 파일 없음";
+                   preview.src = "./image/gyeongju.jpeg";
+               }
+           });
+   
+           document.querySelector('#upload-form').addEventListener('submit', async function(event) {
+               event.preventDefault();
+               // const fileInput = document.getElementById('image');
+               const uploadStatus = document.getElementById('upload-status');
+               if (!previousFile) {
+                   // console.log("fileInput: ", fileInput.files);
+                //    uploadStatus.textContent = "파일을 선택해주세요.";
+                //    uploadStatus.style.color = "red";
+                    alert("이미지 파일을 선택해주세요.");
+                   return;
+               }
+               const formData = new FormData();
+               formData.append('image', previousFile);
+               // formData.append('userid', data.id);
+               // console.log('filename', formData.get('image').name);
+               // console.log('userid:', formData.get('userid'));
+   
+               try {
+                   const response = await fetch('/upload', {
+                       method: 'POST',
+                       body: formData,
+                   });
+                   const data = await response.text();
+                   console.log("data: ", data);
+                   
+                   if (data === "success")
+                   {
+                       alert("파일 업로드 성공!");
+                       window.location.href = '/';
+                   }
+                   else
+                   {
+                       alert("파일 업로드 중 에러 발생!");
+                   }
+                   // if (response.ok) {
+                   //     const result = await response.json();
+                   //     uploadStatus.textContent = result.message || "업로드 성공!";
+                   //     uploadStatus.style.color = "green";
+                   // } else {
+                   //     uploadStatus.textContent = "업로드 실패: 서버 오류";
+                   //     uploadStatus.style.color = "red";
+                   // }
+               } catch (error) {
+                   console.error('업로드 중 오류:', error);
+                //    uploadStatus.textContent = "업로드 실패: 네트워크 오류";
+                //    uploadStatus.style.color = "red";
+               }
+           });
+
+           document.querySelector('#delete-form').addEventListener('submit', async function(event) {
+               event.preventDefault();
+               if (preData.path == './image/gyeongju.jpeg')
+               {
+                alert("이미 기본이미지 사용 중");
+                return;
+               }
+               // const fileInput = document.getElementById('image');
+               // formData.append('userid', data.id);
+               // console.log('filename', formData.get('image').name);
+               // console.log('userid:', formData.get('userid'));
+   
+               try {
+                   const response = await fetch(preData.path, {
+                       method: 'DELETE',
+    
+                   });
+                   const data = await response.text();
+                   console.log("data: ", data);
+                   
+                   if (data === "success")
+                   {
+                       alert("기본이미지 교체 성공!");
+                       window.location.href = '/';
+                   }
+                   else
+                   {
+                       alert("기본이미지 교체 중 에러 발생!");
+                   }
+                   // if (response.ok) {
+                   //     const result = await response.json();
+                   //     uploadStatus.textContent = result.message || "업로드 성공!";
+                   //     uploadStatus.style.color = "green";
+                   // } else {
+                   //     uploadStatus.textContent = "업로드 실패: 서버 오류";
+                   //     uploadStatus.style.color = "red";
+                   // }
+               } catch (error) {
+                   console.error('업로드 중 오류:', error);
+                //    uploadStatus.textContent = "업로드 실패: 네트워크 오류";
+                //    uploadStatus.style.color = "red";
+               }
+           });
+       </script>
+   </body>
+   </html>
