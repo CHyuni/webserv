@@ -15,6 +15,8 @@ BAR_EMPTY = 60
 C++ := clang++
 CFLAGS := -Wall -Wextra -Werror -std=c++98 -g
 RM := rm -f
+START_SCRIPT = start.sh
+SER_FILE = ./default.conf ./myser.conf
 
 NAME := webserv
 
@@ -33,8 +35,9 @@ OBJS := $(SRCS:.cpp=.o)
 
 all : $(NAME)
 
-$(NAME) :
+$(NAME) : $(START_SCRIPT) 
 	@echo
+	@./$(START_SCRIPT) 
 	@make start --no-print-directory
 	@$(C++) $(CFLAGS) $(OBJS) -iquote $(INC_DIR) -o $(NAME)
 	@echo "  Completed! "
@@ -67,6 +70,7 @@ clean :
 fclean :
 	@$(RM) $(OBJS)
 	@$(RM) $(NAME)
+	@$(RM) $(SER_FILE)
 	@echo "  All object files and $(BLUE)$(NAME)$(RESET) are deleted."
 
 re :
