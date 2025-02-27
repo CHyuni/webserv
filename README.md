@@ -19,11 +19,11 @@ NGINX와 호환 가능하며, 정적 웹사이트 제공, 파일 업로드, CGI 
 
 1. 저장소를 클론하세요:
 ```
-git clone https://github.com/1107c/42webserv.git
+git clone https://github.com/CHyuni/webserv.git
 ```
 2. 프로젝트 디렉토리로 이동한 뒤 빌드하세요:
 ```
-cd 42webserv
+cd webserv
 make
 ```
 3. 서버 실행:

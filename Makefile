@@ -12,7 +12,7 @@ DONE = 0
 BAR_FILLED = 0
 BAR_EMPTY = 60
 
-C++ := c++
+C++ := clang++
 CFLAGS := -Wall -Wextra -Werror -std=c++98 -g
 RM := rm -f
 
